@@ -1,5 +1,5 @@
 [root]
-name = "read_fb"
+name = "rust-sense-hat"
 version = "0.1.0"
 dependencies = [
  "framebuffer 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -1,5 +1,5 @@
 [package]
-name = "read_fb"
+name = "rust-sense-hat"
 version = "0.1.0"
 authors = ["Magnus Åsrud"]
 
