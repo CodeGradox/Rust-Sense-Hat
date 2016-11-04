@@ -58,17 +58,6 @@ impl LedDisplay {
 
         // Check every file buffer
         for entry in path {
-            // Check if file can be opened
-            /*let file_path = match entry {
-                Ok(p) => {
-                    match p.to_str() {
-                        Some(s) => s.to_string(),
-                        None => continue,
-                    }
-                },
-                Err(_) => continue,
-            };*/
-
             let rpi_sense_name = b"RPi-Sense FB";
             if let Ok(p) = entry {
                 if let Some(file_path) = p.to_str() {
@@ -81,15 +70,6 @@ impl LedDisplay {
                     }
                 }
             }
-
-            /*if let Ok(fb) = Framebuffer::new(file_path) {
-                let s = b"RPi-Sense FB";
-                let id = fb.fix_screen_info.id;
-                if s == &id[..s.len()] {
-                    fb_tmp = Some(fb);
-                    break;
-                }
-            }*/
         }
 
         let framebuffer = match fb_tmp {
