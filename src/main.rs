@@ -16,11 +16,6 @@ impl Color {
     fn split(&self) -> (u8, u8) {
         match *self {
             Color::Rgb(r, g, b) => {
-                /*let r = (r >> 3) as u16;
-                let g = (g >> 2) as u16;
-                let b = (b >> 3) as u16;
-                let rgb = (r << 11) + (g << 5) + b;
-                ((rgb >> 8) as u8, rgb as u8)*/
                 let r = (r >> 3) << 3;
                 let g = g >> 2;
                 let b = b >> 3;
