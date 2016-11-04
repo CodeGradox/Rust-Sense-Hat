@@ -1,0 +1,8 @@
+[package]
+name = "read_fb"
+version = "0.1.0"
+authors = ["Magnus Åsrud"]
+
+[dependencies]
+framebuffer = "*"
+glob = "0.2"
