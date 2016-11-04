@@ -1,3 +1,4 @@
+#[derive(Debug, Copy, Clone)]
 pub enum Color {
     Rgb(u8, u8, u8),
     Hex565(u16),

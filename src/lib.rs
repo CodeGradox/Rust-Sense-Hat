@@ -93,7 +93,7 @@ impl LedDisplay {
 
 #[derive(Debug)]
 pub enum LedDisplayErrorKind {
-    IoError
+    IoError,
 }
 
 #[derive(Debug)]
@@ -104,7 +104,10 @@ pub struct LedDisplayError {
 
 impl LedDisplayError {
     fn new(kind: LedDisplayErrorKind, details: &str) -> Self {
-        Self { kind: kind, details: details.to_string() }
+        Self {
+            kind: kind,
+            details: details.to_string()
+        }
     }
 }
 
@@ -119,5 +122,4 @@ impl fmt::Display for LedDisplayError {
         write!(fmt, "{}", self.description())
     }
 }
-
 
