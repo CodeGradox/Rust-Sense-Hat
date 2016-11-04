@@ -47,16 +47,17 @@ struct LedDisplay {
 
 impl LedDisplay {
     fn new() -> Result<Self, ()> { 
+        // temporary framebuffer
+        let mut fb_tmp: Option<Framebuffer> = None;
+        
         // Check if any displays are connected
         let path = match glob("/dev/fb*") {
             Ok(p) => p,
             Err(_) => return Err(()),
-        };
+        };  
 
-        // 
-        let mut fb_tmp: Option<Framebuffer> = None;
-
-        // Check every file buffer
+        // Check every file buffer and see if it is
+        // the fb for the Sense Hat LED display
         for entry in path {
             let rpi_sense_name = b"RPi-Sense FB";
             if let Ok(p) = entry {
@@ -98,11 +99,12 @@ impl LedDisplay {
         assert!(y <= 7);
         
         let (msb, lsb) = color.split();
-        // The position of the pixel
+        // The position of the pixel. One pixel is u16
+        // but is stoed as two u8.
         let pos = 2*(x + y*self.height);
 
         // Each pixel is stored in little endian, so we need to flip
-        // the two values as they are big endian
+        // the two values as they are big endian.
         self.frame[pos] = lsb;
         self.frame[pos + 1] = msb;
         self.framebuffer.write_frame(&self.frame);

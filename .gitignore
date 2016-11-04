@@ -1,2 +1,9 @@
 target
+
+# temporary vim files
+*~
 *.swp
+*.swo
+.*.swp
+.*.swo
+.*~
