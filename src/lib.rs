@@ -42,6 +42,8 @@ impl LedDisplay {
     pub fn new() -> Result<Self, ()> { 
         // temporary framebuffer
         let mut fb_tmp: Option<Framebuffer> = None;
+        // Id for the Sense Hat framebuffer
+        let rpi_sense_fb = b"RPi-Sense FB";
         
         // Check if any displays are connected
         let path = match glob("/dev/fb*") {
@@ -51,10 +53,7 @@ impl LedDisplay {
 
         // Check every file buffer and see if it is
         // the fb for the Sense Hat LED display
-        for entry in path { 
-            // Id for the Sense Hat framebuffer
-            let rpi_sense_fb = b"RPi-Sense FB";
-
+        for entry in path {
             if let Ok(file_path) = entry {
                 if let Ok(fb) = Framebuffer::new(&file_path.to_string_lossy()) {
                     let id = fb.fix_screen_info.id;
