@@ -36,8 +36,6 @@ impl Color {
 struct LedDisplay {
     framebuffer: Framebuffer,
     frame: Vec<u8>,
-    height: usize,
-    width: usize,
 }
 
 impl LedDisplay {
@@ -53,16 +51,16 @@ impl LedDisplay {
 
         // Check every file buffer and see if it is
         // the fb for the Sense Hat LED display
-        for entry in path {
-            let rpi_sense_name = b"RPi-Sense FB";
-            if let Ok(p) = entry {
-                if let Some(file_path) = p.to_str() {
-                    if let Ok(fb) = Framebuffer::new(file_path) {
-                        let id = fb.fix_screen_info.id;
-                        if rpi_sense_name == &id[..rpi_sense_name.len()] {
-                            fb_tmp = Some(fb);
-                            break;
-                        }
+        for entry in path { 
+            // Id for the Sense Hat framebuffer
+            let rpi_sense_fb = b"RPi-Sense FB";
+
+            if let Ok(file_path) = entry {
+                if let Ok(fb) = Framebuffer::new(&file_path.to_string_lossy()) {
+                    let id = fb.fix_screen_info.id;
+                    if rpi_sense_fb == &id[..rpi_sense_fb.len()] {
+                        fb_tmp = Some(fb);
+                        break;
                     }
                 }
             }
@@ -76,27 +74,22 @@ impl LedDisplay {
             },
         };
        
-        let h = framebuffer.var_screen_info.xres as usize;
-        let w = framebuffer.var_screen_info.yres as usize;
         let line_length = framebuffer.fix_screen_info.line_length as usize;
-        assert!(h == 8 && w == 8);
 
         Ok(Self {
             framebuffer: framebuffer,
-            frame: vec![0u8; line_length * h],
-            height: h,
-            width: w,
+            frame: vec![0u8; line_length * 8],
         })
     }
 
     fn draw_pixel(&mut self, x: usize, y: usize, color: Color) { 
-        assert!(x <= 7);
-        assert!(y <= 7);
+        assert!(x <= 7, "X position must be within 0 and 7");
+        assert!(y <= 7, "Y position must be within 0 and 7");
         
         let (msb, lsb) = color.split();
         // The position of the pixel. One pixel is u16
         // but is stoed as two u8.
-        let pos = 2*(x + y*self.height);
+        let pos = 2*(x + y*8);
 
         // Each pixel is stored in little endian, so we need to flip
         // the two values as they are big endian.
@@ -121,7 +114,6 @@ fn main() {
     display.draw_pixel(0, 0, Color::Hex888(0xafcfdb));
     display.draw_pixel(0, 2, Color::Hex565(0xae7b));
     display.draw_pixel(0, 4, Color::Rgb(175, 207, 219));
-
-    //display.draw_pixel(0, 0, Hex888(0x2900a5));
+    display.clear();
 }
 
