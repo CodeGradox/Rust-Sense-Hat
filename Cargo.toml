@@ -1,5 +1,5 @@
 [package]
-name = "rust-sense-hat"
+name = "rust_sense_hat"
 version = "0.1.0"
 authors = ["Magnus Åsrud"]
 
