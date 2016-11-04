@@ -1,6 +1,7 @@
 extern crate rust_sense_hat;
 
-use rust_sense_hat::{LedDisplay, Color};
+use rust_sense_hat::LedDisplay;
+use rust_sense_hat::color::Color;
 
 fn main() {
     //use Color::{Rgb, Hex565, Hex888};
@@ -10,6 +11,6 @@ fn main() {
     display.draw_pixel(0, 0, Color::Hex888(0xafcfdb));
     display.draw_pixel(0, 2, Color::Hex565(0xae7b));
     display.draw_pixel(0, 4, Color::Rgb(175, 207, 219));
-    display.clear();
+    display.clear(); 
 }
 
