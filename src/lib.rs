@@ -13,7 +13,7 @@ use color::Color;
 
 pub struct LedDisplay {
     framebuffer: Framebuffer,
-    frame: Vec<u8>,
+    frame: [u8; 128],
 }
 
 impl LedDisplay {
@@ -57,13 +57,11 @@ impl LedDisplay {
                     "Cannot detect RPi-Sense FB device")
                 )
             },
-        };
-       
-        let line_length = framebuffer.fix_screen_info.line_length as usize;
+        }; 
 
         Ok(Self {
             framebuffer: framebuffer,
-            frame: vec![0u8; line_length * 8],
+            frame: [0u8; 128],
         })
     }
 
