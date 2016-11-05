@@ -19,7 +19,7 @@ pub struct LedDisplay {
 impl LedDisplay {
     pub fn new() -> Result<Self, LedDisplayError> { 
         // temporary framebuffer
-        let mut fb_tmp: Option<Framebuffer> = None;
+        let mut fb_tmp = None;
         // Id for the Sense Hat framebuffer
         let rpi_sense_fb = b"RPi-Sense FB";
         
@@ -61,10 +61,22 @@ impl LedDisplay {
 
         Ok(Self {
             framebuffer: framebuffer,
-            frame: [0u8; 128],
+            frame: [0; 128],
         })
     }
 
+    // Paints the whole LED with a signle color
+    pub fn draw_pixels(&mut self, color: Color) {
+        let (msb, lsb) = color.split();
+        for i in 0..64 {
+            self.frame[i * 2] = lsb;
+            self.frame[i * 2 + 1] = msb;
+        }
+        self.framebuffer.write_frame(&self.frame);
+    }
+
+
+    // Draws one pixel on the LED display
     pub fn draw_pixel(&mut self, x: usize, y: usize, color: Color) { 
         assert!(x <= 7, "X position must be within 0 and 7");
         assert!(y <= 7, "Y position must be within 0 and 7");
