@@ -68,9 +68,9 @@ impl LedDisplay {
     // Paints the whole LED with a signle color
     pub fn draw_pixels(&mut self, color: Color) {
         let (msb, lsb) = color.split();
-        for i in 0..64 {
-            self.frame[i * 2] = lsb;
-            self.frame[i * 2 + 1] = msb;
+        for i in (0..64).map(|x| x * 2) {
+            self.frame[i] = lsb;
+            self.frame[i + 1] = msb;
         }
         self.framebuffer.write_frame(&self.frame);
     }
