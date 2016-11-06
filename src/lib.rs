@@ -18,8 +18,6 @@ pub struct LedDisplay {
 
 impl LedDisplay {
     pub fn new() -> Result<Self, LedDisplayError> { 
-        // temporary framebuffer
-        let mut fb_tmp = None;
         // Id for the Sense Hat framebuffer
         let rpi_sense_fb = b"RPi-Sense FB";
         
@@ -34,35 +32,24 @@ impl LedDisplay {
             ),
         };
 
-        // Check every file buffer and see if it is
-        // the fb for the Sense Hat LED display
-        for entry in path {
-            if let Ok(file_path) = entry {
-                if let Ok(fb) = Framebuffer::new(&file_path.to_string_lossy()) {
-                    let id = fb.fix_screen_info.id;
-                    if rpi_sense_fb == &id[..rpi_sense_fb.len()] {
-                        fb_tmp = Some(fb);
-                        break;
-                    }
-                }
-            }
+        // Try to find the Sense Hat frame buffer
+        let framebuffer = path.filter_map(Result::ok)
+            .filter_map(|file_path| Framebuffer::new(&file_path.to_string_lossy()).ok())
+            .filter(|fb| {
+                let id = fb.fix_screen_info.id;
+                rpi_sense_fb == &id[..rpi_sense_fb.len()]})
+            .next();
+
+        match framebuffer {
+            Some(fb) => Ok(Self {
+                framebuffer: fb,
+                frame: [0; 128],
+            }),
+            None => Err(LedDisplayError::new(
+                    LedDisplayErrorKind::IoError,
+                    "Cannot detect RPi-Sense FB device")),
         }
 
-        let framebuffer = match fb_tmp {
-            Some(fb) => fb,
-            None => {
-                return Err(
-                    LedDisplayError::new(
-                    LedDisplayErrorKind::IoError,
-                    "Cannot detect RPi-Sense FB device")
-                )
-            },
-        }; 
-
-        Ok(Self {
-            framebuffer: framebuffer,
-            frame: [0; 128],
-        })
     }
 
     // Paints the whole LED with a signle color
