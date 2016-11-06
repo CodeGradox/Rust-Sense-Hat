@@ -69,8 +69,6 @@ impl LedDisplay {
         assert!(y <= 7, "Y position must be within 0 and 7");
         
         let (msb, lsb) = color.split();
-        // The position of the pixel. One pixel is u16
-        // but is stoed as two u8.
         let pos = 2 * (x + y * 8);
 
         // Each pixel is stored in little endian, so we need to flip
@@ -82,7 +80,7 @@ impl LedDisplay {
 
     pub fn clear(&mut self) {
         for val in self.frame.iter_mut() {
-            *val = 0u8;
+            *val = 0;
         }
         self.framebuffer.write_frame(&self.frame);
     }
