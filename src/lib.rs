@@ -17,19 +17,18 @@ pub struct LedDisplay {
 }
 
 impl LedDisplay {
-    pub fn new() -> Result<Self, LedDisplayError> { 
+    pub fn new() -> Result<Self, LedDisplayError> {
         // Id for the Sense Hat framebuffer
         let rpi_sense_fb = b"RPi-Sense FB";
-        
+
         // Check if any displays are connected
         let path = match glob("/dev/fb*") {
             Ok(p) => p,
-            Err(_) => return Err(
-                    LedDisplayError::new(
-                    LedDisplayErrorKind::IoError,
-                    "Could not find any framebuffers.\
-                    Please connect your Sense Hat to the Raspberry Pi.")
-            ),
+            Err(_) => {
+                return Err(LedDisplayError::new(LedDisplayErrorKind::IoError,
+                                                "Could not find any framebuffers.Please connect \
+                                                 your Sense Hat to the Raspberry Pi."))
+            }
         };
 
         // Try to find the Sense Hat frame buffer
@@ -37,17 +36,21 @@ impl LedDisplay {
             .filter_map(|file_path| Framebuffer::new(&file_path.to_string_lossy()).ok())
             .filter(|fb| {
                 let id = fb.fix_screen_info.id;
-                rpi_sense_fb == &id[..rpi_sense_fb.len()]})
+                rpi_sense_fb == &id[..rpi_sense_fb.len()]
+            })
             .next();
 
         match framebuffer {
-            Some(fb) => Ok(Self {
-                framebuffer: fb,
-                frame: [0; 128],
-            }),
-            None => Err(LedDisplayError::new(
-                    LedDisplayErrorKind::IoError,
-                    "Cannot detect RPi-Sense FB device")),
+            Some(fb) => {
+                Ok(Self {
+                    framebuffer: fb,
+                    frame: [0; 128],
+                })
+            }
+            None => {
+                Err(LedDisplayError::new(LedDisplayErrorKind::IoError,
+                                         "Cannot detect RPi-Sense FB device"))
+            }
         }
 
     }
@@ -64,10 +67,10 @@ impl LedDisplay {
 
 
     // Draws one pixel on the LED display
-    pub fn draw_pixel(&mut self, x: usize, y: usize, color: Color) { 
+    pub fn draw_pixel(&mut self, x: usize, y: usize, color: Color) {
         assert!(x <= 7, "X position must be within 0 and 7");
         assert!(y <= 7, "Y position must be within 0 and 7");
-        
+
         let (msb, lsb) = color.split();
         let pos = 2 * (x + y * 8);
 
@@ -101,7 +104,7 @@ impl LedDisplayError {
     fn new(kind: LedDisplayErrorKind, details: &str) -> Self {
         Self {
             kind: kind,
-            details: details.to_string()
+            details: details.to_string(),
         }
     }
 }
@@ -117,4 +120,3 @@ impl fmt::Display for LedDisplayError {
         write!(fmt, "{}", self.description())
     }
 }
-
