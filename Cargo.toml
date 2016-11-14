@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["Magnus Åsrud"]
 
 [dependencies]
-framebuffer = "*"
+framebuffer = "0.1.4"
 glob = "0.2"
